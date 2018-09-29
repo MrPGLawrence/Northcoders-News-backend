@@ -75,18 +75,54 @@ describe("/api", function() {
       });
       it("GET returns a 400 for an invalid id", () => {
         return request
-          .get("/api/articles/se65dr76ft7giyutvu")
+          .get("/api/articles/abc")
           .expect(400)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Bad request");
+            expect(msg).to.equal("Bad request, Invalid Parameter");
           });
       });
-      it("GET returns a 404 for an invalid id that does not exist", () => {
+      it("GET returns a 404 when page not found", () => {
         return request
           .get("/api/articles/5bad03194bdc255761379629")
           .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Page not found");
+            expect(msg).to.equal("Article Not Found");
+          });
+      });
+      it("PATCH returns 200 and a vote up on an article", () => {
+        return request
+          .patch(`/api/articles/${articleDocs[0]._id}?vote=up`)
+          .expect(200)
+          .then(({ body: { article } }) => {
+            expect(article).to.have.keys(
+              "__v",
+              "_id",
+              "belongs_to",
+              "body",
+              "created_at",
+              "created_by",
+              "title",
+              "votes"
+            );
+            expect(article.votes).to.eql(1);
+          });
+      });
+      it("PATCH returns 200 and a vote up on an article", () => {
+        return request
+          .patch(`/api/articles/${articleDocs[0]._id}?vote=down`)
+          .expect(200)
+          .then(({ body: { article } }) => {
+            expect(article).to.have.keys(
+              "__v",
+              "_id",
+              "belongs_to",
+              "body",
+              "created_at",
+              "created_by",
+              "title",
+              "votes"
+            );
+            expect(article.votes).to.eql(-1);
           });
       });
       describe("/:articleId/comments", () => {
@@ -109,12 +145,67 @@ describe("/api", function() {
               ]);
             });
         });
-        it("GET returns a 404 for an invalid id that does not exist", () => {
+        it("GET returns a 400 for an invalid request", () => {
           return request
-            .get("/api/articles/5bad03194bdc255761379629/comment")
+            .get(`/api/articles/${articleDocs[0]._id}/comnts`)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Bad request, Invalid Parameter");
+            });
+        });
+        it("GET returns a 404 when page not found", () => {
+          return request
+            .get("/api/articles/5bad052fd53e38586a1feb2e/comments")
             .expect(404)
             .then(({ body: { msg } }) => {
-              expect(msg).to.equal("Page not found");
+              expect(msg).to.equal("Article Not Found");
+            });
+        });
+        it("POST returns 201 and the new added comment", () => {
+          const newComment = {
+            title: "new comment",
+            body: "This is a new comment",
+            belongs_to: "5bad052fd53e38586a1feb2e",
+            created_by: "5bad052fd53e38586a1feb2a"
+          };
+          return request
+            .post(`/api/articles/${articleDocs[0]._id}/comments`)
+            .send(newComment)
+            .expect(201)
+            .then(({ body: { comment } }) => {
+              expect(comment).to.be.an("object");
+              expect(comment).to.have.all.keys(
+                "__v",
+                "_id",
+                "belongs_to",
+                "body",
+                "created_at",
+                "created_by",
+                "votes"
+              );
+            });
+        });
+        it("POST returns a 400 when a bad request is made", () => {
+          const newComment = {
+            title: "new comment",
+            bod: "This is a new comment",
+            belongs_to: "5bad052fd53e38586a1feb2e",
+            created_by: "5bad052fd53e38586a1feb2a"
+          };
+          return request
+            .post(`/api/articles/${articleDocs[0]._id}/comments`)
+            .send(newComment)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Bad request, Invalid Post");
+            });
+        });
+        it("POST returns a 404 when page not found", () => {
+          return request
+            .post(`/api/articles/${articleDocs[0]._id}/comnts`)
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Resource not found");
             });
         });
       });
@@ -161,7 +252,7 @@ describe("/api", function() {
           .get("/api/users/dave")
           .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Page not found");
+            expect(msg).to.equal("User Not Found");
           });
       });
     });
@@ -176,7 +267,7 @@ describe("/api", function() {
           expect(topics.length).to.equal(2);
           expect(topics[0].name).to.equal(topicDocs[0].name);
           expect(topics[0]._id).to.equal(`${topicDocs[0]._id}`);
-          expect(topics[0]).to.have.keys(["__v", "_id", "slug", "title"]);
+          expect(topics[0]).to.have.keys(["_id", "slug", "title"]);
         });
     });
     describe("/:topic_slug/articles", () => {
@@ -205,7 +296,179 @@ describe("/api", function() {
           .get(`/api/topics/${topicDocs[0].slug}/article`)
           .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Page not found");
+            expect(msg).to.equal("Resource not found");
+          });
+      });
+      it("POST returns 201 and the new added article", () => {
+        const newArticle = {
+          title: "new article",
+          body: "This is my new article content",
+          created_by: "5bad052fd53e38586a1feb2e"
+        };
+        return request
+          .post(`/api/topics/${topicDocs[0].slug}/articles`)
+          .send(newArticle)
+          .expect(201)
+          .then(({ body: { article } }) => {
+            expect(article).to.be.an("object");
+            expect(article).to.have.all.keys(
+              "__v",
+              "_id",
+              "belongs_to",
+              "body",
+              "created_at",
+              "created_by",
+              "title",
+              "votes"
+            );
+          });
+      });
+      it("POST returns a 400 when a bad request is made", () => {
+        const newArticle = {
+          bod: "This is my new article content",
+          created_by: "5bad052fd53e38586a1feb2e"
+        };
+        return request
+          .post(`/api/topics/${topicDocs[0].slug}/articles`)
+          .send(newArticle)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request, Invalid Post");
+          });
+      });
+      it("POST returns a 404 when page not found", () => {
+        return request
+          .post(`/api/topics/${topicDocs[0].slug}/arles`)
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Resource not found");
+          });
+      });
+    });
+  });
+  describe("/comments", () => {
+    it("GET returns 200 and an array of comments", () => {
+      return request
+        .get("/api/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments).to.be.an("array");
+          expect(comments.length).to.equal(8);
+          expect(comments[0].created_by).to.equal(
+            `${commentDocs[0].created_by.id}`
+          );
+          expect(comments[0]._id).to.equal(`${commentDocs[0].id}`);
+          expect(comments[0]).to.have.keys([
+            "_id",
+            "belongs_to",
+            "body",
+            "created_at",
+            "created_by",
+            "votes"
+          ]);
+        });
+    });
+    describe.only("/:comment_id", () => {
+      it("GET returns 200 and an comment object", () => {
+        return request
+          .get(`/api/comments/${commentDocs[0]._id}`)
+          .expect(200)
+          .then(({ body: { comment } }) => {
+            expect(comment).to.be.an("object");
+            expect(comment.title).to.equal(commentDocs[0].title);
+            expect(comment._id).to.equal(`${commentDocs[0]._id}`);
+            expect(comment).to.have.keys([
+              "_id",
+              "belongs_to",
+              "body",
+              "created_at",
+              "created_by",
+              "votes"
+            ]);
+          });
+      });
+      it("GET returns a 400 for an invalid id", () => {
+        return request
+          .get("/api/comment/abc")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request, Invalid Parameter");
+          });
+      });
+      it("GET returns a 404 when page not found", () => {
+        return request
+          .get("/api/comment/5bad03194bdc255761379629")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Resource not found");
+          });
+      });
+      it("PATCH returns 200 and a vote up on an comment", () => {
+        return request
+          .patch(`/api/comments/${commentDocs[0]._id}?vote=up`)
+          .expect(200)
+          .then(({ body: { comment } }) => {
+            expect(comment).to.have.keys(
+              "__v",
+              "_id",
+              "belongs_to",
+              "body",
+              "created_at",
+              "created_by",
+              "votes"
+            );
+            expect(comment.votes).to.eql(8);
+          });
+      });
+      it("PATCH returns 200 and a vote down on a comment", () => {
+        return request
+          .patch(`/api/comments/${commentDocs[0]._id}?vote=down`)
+          .expect(200)
+          .then(({ body: { comment } }) => {
+            expect(comment).to.have.keys(
+              "__v",
+              "_id",
+              "belongs_to",
+              "body",
+              "created_at",
+              "created_by",
+              "votes"
+            );
+            expect(comment.votes).to.eql(6);
+          });
+      });
+      it("DELETE returns a 200 and deletes a single comment", () => {
+        return request
+          .delete(`/api/comments/${commentDocs[0]._id}`)
+          .expect(200)
+          .then(({ body: { comment } }) => {
+            expect(comment).to.be.an("object");
+            expect(comment).to.have.all.keys(
+              "__v",
+              "_id",
+              "belongs_to",
+              "body",
+              "created_at",
+              "created_by",
+              "votes"
+            );
+          });
+      });
+      it("DELETE returns a 400 for an invalid id", () => {
+        // console.log(commentDocs[0]);
+        return request
+          .delete("/api/comments/a")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request, Invalid Parameter");
+          });
+      });
+      it("DELETE returns a 404 when page not found", () => {
+        return request
+          .delete("/api/comments/5baaaca0f8bdbdcadc7fc53ba")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Article Not Found");
           });
       });
     });

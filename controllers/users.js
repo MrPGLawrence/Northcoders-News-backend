@@ -3,7 +3,7 @@ const { User } = require("../models");
 exports.getAllUsers = (req, res, next) => {
   User.find()
     .then(users => {
-      res.send({ users });
+      res.status(200).send({ users });
     })
     .catch(next);
 };
@@ -14,7 +14,7 @@ exports.getUserByUsername = (req, res, next) => {
     .then(user => {
       if (!user) {
         throw { msg: "User Not Found", status: 404 };
-      } else res.send({ user });
+      } else res.status(200).send({ user });
     })
     .catch(next);
 };
