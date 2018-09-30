@@ -2,27 +2,18 @@ const { Article, Comment } = require("../models");
 
 const getCommentCount = articles => {
   return articles.map(article => {
-    return Comment.count({ belongs_to: article._id }).then(count => count);
+    return Comment.countDocuments({ belongs_to: article._id }).then(
+      count => count
+    );
   });
 };
 
 exports.getAllArticles = (req, res, next) => {
-  Article.find()
+  Article.find(null, "-__v")
     .then(articles => {
-      //   return Promise.all([articles, ...getCommentCount(articles)]);
-      // })
-      // .then(([articles, ...commentCount]) => {
-      //   console.log(commentCount);
-      //   console.log(articles);
-      //   const article = articles.map(article => {
-      //     article;
-      //   });
-      //   const numberOfComments = commentCount.map(numberOfComments => {
-      //     numberOfComments;
-      //   });
-      //   Object.assign(article, { comment_amount: numberOfComments });
-      // })
-      // .then(articles => {
+      return Promise.all([articles, ...getCommentCount(articles)]);
+    })
+    .then(([articles, ...commentCount]) => {
       res.status(200).send({ articles });
     })
     .catch(next);
@@ -30,7 +21,7 @@ exports.getAllArticles = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
   Article.findById(req.params.article_id, "-__v")
-    .populate("created_by")
+    .populate("created_by", "-__v")
     .then(article => {
       if (!article) {
         throw { msg: "Article Not Found", status: 404 };
@@ -38,6 +29,20 @@ exports.getArticleById = (req, res, next) => {
     })
     .catch(next);
 };
+
+// exports.getArticleById = (req, res, next) => {
+//   Article.findById(req.params.article_id, "-__v");
+//   Promise.all([
+//     Comment.find({ belongs_to: req.params }, "-__v"),
+//     Article.findById(req.params).populate("created_by")
+//   ])
+//     .then(([comment, article]) => {
+//       if (!article) {
+//         throw { msg: "Article Not Found", status: 404 };
+//       } else res.status(200).send({ ...article, commentCount: comment.length });
+//     })
+//     .catch(next);
+// };
 
 exports.getCommentsByArticleId = (req, res, next) => {
   Article.findById(req.params.article_id, "-__v")
@@ -77,7 +82,8 @@ exports.patchArticleVote = (req, res, next) => {
     req.params.article_id,
     {
       $inc: {
-        votes: req.query.vote === "up" ? 1 : req.query.vote === "down" ? -1 : 0
+        votes:
+          req.query.vote === "up" ? 1 : req.query.vote === "down" ? -1 : next
       }
     },
     { new: true }

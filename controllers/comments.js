@@ -10,7 +10,7 @@ exports.getAllComments = (req, res, next) => {
 
 exports.getCommentById = (req, res, next) => {
   Comment.findById(req.params.comment_id, "-__v")
-    .populate("created_by")
+    .populate("created_by", "-__v")
     .then(comment => {
       if (!comment) {
         throw { msg: "Comment Not Found", status: 404 };
@@ -20,7 +20,7 @@ exports.getCommentById = (req, res, next) => {
 };
 
 exports.deleteComment = (req, res, next) => {
-  Comment.findOneAndDelete(req.params.comment_id)
+  Comment.findByIdAndRemove(req.params.comment_id)
     .then(comment => {
       if (!comment) {
         throw { msg: "Comment Not Found", status: 404 };
@@ -38,7 +38,8 @@ exports.patchCommentVote = (req, res, next) => {
     req.params.comment_id,
     {
       $inc: {
-        votes: req.query.vote === "up" ? 1 : req.query.vote === "down" ? -1 : 0
+        votes:
+          req.query.vote === "up" ? 1 : req.query.vote === "down" ? -1 : next
       }
     },
     { new: true }

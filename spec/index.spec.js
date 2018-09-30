@@ -21,7 +21,6 @@ describe("/api", function() {
       articleData,
       commentData
     }).then(docs => {
-      console.log("seeded...");
       userDocs = docs[0];
       topicDocs = docs[1];
       articleDocs = docs[2];
@@ -42,7 +41,6 @@ describe("/api", function() {
           expect(articles[0].title).to.equal(articleDocs[0].title);
           expect(articles[0]._id).to.equal(`${articleDocs[0]._id}`);
           expect(articles[0]).to.have.keys([
-            "__v",
             "_id",
             "belongs_to",
             "body",
@@ -125,6 +123,22 @@ describe("/api", function() {
             expect(article.votes).to.eql(-1);
           });
       });
+      it("PATCH returns a 400 for an invalid id", () => {
+        return request
+          .patch(`/api/articles/${articleDocs[0]._id}?vote=across`)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request, Invalid Parameter");
+          });
+      });
+      it("PATCH returns a 404 when page not found", () => {
+        return request
+          .patch("/api/articles/5bad052fd53e38586a1feb2e?vote=up")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Article Not Found");
+          });
+      });
       describe("/:articleId/comments", () => {
         it("GET returns 200 and an array of comments", () => {
           return request
@@ -145,20 +159,12 @@ describe("/api", function() {
               ]);
             });
         });
-        it("GET returns a 400 for an invalid request", () => {
-          return request
-            .get(`/api/articles/${articleDocs[0]._id}/comnts`)
-            .expect(400)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal("Bad request, Invalid Parameter");
-            });
-        });
         it("GET returns a 404 when page not found", () => {
           return request
-            .get("/api/articles/5bad052fd53e38586a1feb2e/comments")
+            .get(`/api/articles/${articleDocs[0]._id}/coments`)
             .expect(404)
             .then(({ body: { msg } }) => {
-              expect(msg).to.equal("Article Not Found");
+              expect(msg).to.equal("Resource not found");
             });
         });
         it("POST returns 201 and the new added comment", () => {
@@ -222,7 +228,6 @@ describe("/api", function() {
           expect(users[0].name).to.equal(userDocs[0].name);
           expect(users[0]._id).to.equal(`${userDocs[0]._id}`);
           expect(users[0]).to.have.keys([
-            "__v",
             "_id",
             "avatar_url",
             "name",
@@ -247,7 +252,7 @@ describe("/api", function() {
             ]);
           });
       });
-      it("GET returns a 404 for an invalid id that does not exist", () => {
+      it("GET returns a 404 for a username that does not exist", () => {
         return request
           .get("/api/users/dave")
           .expect(404)
@@ -368,7 +373,7 @@ describe("/api", function() {
           ]);
         });
     });
-    describe.only("/:comment_id", () => {
+    describe("/:comment_id", () => {
       it("GET returns 200 and an comment object", () => {
         return request
           .get(`/api/comments/${commentDocs[0]._id}`)
@@ -389,7 +394,7 @@ describe("/api", function() {
       });
       it("GET returns a 400 for an invalid id", () => {
         return request
-          .get("/api/comment/abc")
+          .get("/api/comments/abc")
           .expect(400)
           .then(({ body: { msg } }) => {
             expect(msg).to.equal("Bad request, Invalid Parameter");
@@ -397,10 +402,10 @@ describe("/api", function() {
       });
       it("GET returns a 404 when page not found", () => {
         return request
-          .get("/api/comment/5bad03194bdc255761379629")
+          .get("/api/comments/5bad03194bdc255761379629")
           .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Resource not found");
+            expect(msg).to.equal("Comment Not Found");
           });
       });
       it("PATCH returns 200 and a vote up on an comment", () => {
@@ -437,25 +442,31 @@ describe("/api", function() {
             expect(comment.votes).to.eql(6);
           });
       });
+      it("PATCH returns a 400 for an invalid id", () => {
+        return request
+          .patch(`/api/comments/${commentDocs[0]._id}?vote=across`)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request, Invalid Parameter");
+          });
+      });
+      it("PATCH returns a 404 when page not found", () => {
+        return request
+          .patch("/api/comments/5bad052fd53e38586a1feb2e?vote=up")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Comment Not Found");
+          });
+      });
       it("DELETE returns a 200 and deletes a single comment", () => {
         return request
           .delete(`/api/comments/${commentDocs[0]._id}`)
           .expect(200)
-          .then(({ body: { comment } }) => {
-            expect(comment).to.be.an("object");
-            expect(comment).to.have.all.keys(
-              "__v",
-              "_id",
-              "belongs_to",
-              "body",
-              "created_at",
-              "created_by",
-              "votes"
-            );
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Comment sucsessfully removed");
           });
       });
       it("DELETE returns a 400 for an invalid id", () => {
-        // console.log(commentDocs[0]);
         return request
           .delete("/api/comments/a")
           .expect(400)
@@ -465,10 +476,10 @@ describe("/api", function() {
       });
       it("DELETE returns a 404 when page not found", () => {
         return request
-          .delete("/api/comments/5baaaca0f8bdbdcadc7fc53ba")
+          .delete(`/api/comment/${commentDocs[0]._id}`)
           .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Article Not Found");
+            expect(msg).to.equal("Resource not found");
           });
       });
     });

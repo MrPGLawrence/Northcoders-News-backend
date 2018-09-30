@@ -1,7 +1,7 @@
 const { User } = require("../models");
 
 exports.getAllUsers = (req, res, next) => {
-  User.find()
+  User.find(null, "-__v")
     .then(users => {
       res.status(200).send({ users });
     })

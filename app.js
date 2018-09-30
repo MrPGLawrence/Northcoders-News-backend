@@ -12,12 +12,14 @@ const {
   handle500s
 } = require("./errors");
 
+app.set("view engine", "ejs");
+
 mongoose.connect(DB_URL).then(() => {
   console.log(`Connected to ${DB_URL}...`);
 });
 
 app.get("/", (req, res) => {
-  res.send({ Message: "Home Page" });
+  res.status(200).render("home");
 });
 
 app.use("/api", apiRouter);

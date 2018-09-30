@@ -5,7 +5,7 @@ const articlesRouter = require("./articles");
 const commentsRouter = require("./comments");
 
 apiRouter.get("/", (req, res) => {
-  res.sendFile(`${__dirname}/views/api.html`);
+  res.status(200).render("api");
 });
 
 apiRouter.use("/users", usersRouter);
