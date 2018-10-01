@@ -14,35 +14,42 @@ exports.getAllArticles = (req, res, next) => {
       return Promise.all([articles, ...getCommentCount(articles)]);
     })
     .then(([articles, ...commentCount]) => {
-      res.status(200).send({ articles });
-    })
-    .catch(next);
+      return Promise.all([
+        articles.map((article, index) => {
+          return {
+            ...article._doc,
+            comment_count: commentCount[index]
+          };
+        })
+      ])
+        .then(([updatedArticles]) => {
+          res.status(200).send({ updatedArticles });
+        })
+        .catch(next);
+    });
 };
 
 exports.getArticleById = (req, res, next) => {
-  Article.findById(req.params.article_id, "-__v")
-    .populate("created_by", "-__v")
-    .then(article => {
+  Comment.count({ belongs_to: req.params.article_id })
+    .then(commentCount => {
+      if (!commentCount || commentCount < 0) {
+        throw { status: 404 };
+      } else
+        return Promise.all([
+          Article.findById(req.params.article_id, "-__v").populate(
+            "created_by"
+          ),
+          commentCount
+        ]);
+    })
+    .then(([articleOne, commentCount]) => {
+      const article = { ...articleOne._doc, comment_count: commentCount };
       if (!article) {
         throw { msg: "Article Not Found", status: 404 };
       } else res.status(200).send({ article });
     })
     .catch(next);
 };
-
-// exports.getArticleById = (req, res, next) => {
-//   Article.findById(req.params.article_id, "-__v");
-//   Promise.all([
-//     Comment.find({ belongs_to: req.params }, "-__v"),
-//     Article.findById(req.params).populate("created_by")
-//   ])
-//     .then(([comment, article]) => {
-//       if (!article) {
-//         throw { msg: "Article Not Found", status: 404 };
-//       } else res.status(200).send({ ...article, commentCount: comment.length });
-//     })
-//     .catch(next);
-// };
 
 exports.getCommentsByArticleId = (req, res, next) => {
   Article.findById(req.params.article_id, "-__v")

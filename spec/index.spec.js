@@ -35,15 +35,17 @@ describe("/api", function() {
       return request
         .get("/api/articles")
         .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles).to.be.an("array");
-          expect(articles.length).to.equal(4);
-          expect(articles[0].title).to.equal(articleDocs[0].title);
-          expect(articles[0]._id).to.equal(`${articleDocs[0]._id}`);
-          expect(articles[0]).to.have.keys([
+        .then(({ body: { updatedArticles } }) => {
+          expect(updatedArticles).to.be.an("array");
+          expect(updatedArticles.length).to.equal(4);
+          expect(updatedArticles[0].title).to.equal(articleDocs[0].title);
+          expect(updatedArticles[0]._id).to.equal(`${articleDocs[0]._id}`);
+          expect(updatedArticles[0].comment_count).to.equal(8);
+          expect(updatedArticles[0]).to.have.keys([
             "_id",
             "belongs_to",
             "body",
+            "comment_count",
             "created_at",
             "created_by",
             "title",
@@ -60,10 +62,12 @@ describe("/api", function() {
             expect(article).to.be.an("object");
             expect(article.title).to.equal(articleDocs[0].title);
             expect(article._id).to.equal(`${articleDocs[0]._id}`);
+            expect(article.comment_count).to.equal(8);
             expect(article).to.have.keys([
               "_id",
               "belongs_to",
               "body",
+              "comment_count",
               "created_at",
               "created_by",
               "title",
@@ -84,7 +88,7 @@ describe("/api", function() {
           .get("/api/articles/5bad03194bdc255761379629")
           .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Article Not Found");
+            expect(msg).to.equal("Page not found");
           });
       });
       it("PATCH returns 200 and a vote up on an article", () => {
