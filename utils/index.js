@@ -27,7 +27,7 @@ exports.formatArticleData = (userDocs, topicDocs) => {
   });
 };
 
-exports.formatCommentData = (userDocs, topicDocs, articleDocs) => {
+exports.formatCommentData = (userDocs, articleDocs) => {
   return commentData.map(comment => {
     return {
       ...comment,

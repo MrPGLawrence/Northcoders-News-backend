@@ -37,7 +37,6 @@ If you need to install either Node.js or npm please follow the links provided wh
 A number of npm packages have been installed to help build this API. These include:
 
 - [express](http://expressjs.com/)
-- [ejs](http://ejs.co/)
 - [mongodb](https://www.mongodb.com/)
 - [mongoose](https://mongoosejs.com/)
 - [body-parser](https://www.npmjs.com/package/body-parser)
@@ -57,7 +56,7 @@ npm init
 Once the package.json file and a package-lock.json file have been created, install express, ejs, mongodb and mongoose
 
 ```
-npm install express ejs mongodb mongoose
+npm install express mongodb mongoose
 ```
 
 Then install body-parser, chai, mocha, nodemon and supertest as devDependencies

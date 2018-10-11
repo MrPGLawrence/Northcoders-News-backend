@@ -5,7 +5,7 @@ const articlesRouter = require("./articles");
 const commentsRouter = require("./comments");
 
 apiRouter.get("/", (req, res) => {
-  res.status(200).render("api");
+  res.status(200).send("api");
 });
 
 apiRouter.use("/users", usersRouter);

@@ -53,7 +53,6 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
   Article.findById(req.params.article_id, "-__v")
-    .populate("created_by")
     .then(article => {
       if (!article) {
         throw { msg: "Article Not Found", status: 404 };

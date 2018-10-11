@@ -28,9 +28,7 @@ const seedDB = (userData, topicData, articleData, commentData) => {
         userDocs,
         topicDocs,
         articleDocs,
-        Comment.insertMany(
-          formatCommentData(userDocs, topicDocs, articleDocs, commentData)
-        )
+        Comment.insertMany(formatCommentData(userDocs, articleDocs))
       ]);
     })
     .catch(err => {

@@ -9,10 +9,9 @@ const {
   topicData,
   articleData,
   commentData
-} = require("../seed/testdata");
+} = require("../seed/testData");
 
 describe("/api", function() {
-  this.timeout(5000);
   let userDocs, topicDocs, articleDocs, commentDocs;
   beforeEach(() => {
     return seedDB({
@@ -21,10 +20,7 @@ describe("/api", function() {
       articleData,
       commentData
     }).then(docs => {
-      userDocs = docs[0];
-      topicDocs = docs[1];
-      articleDocs = docs[2];
-      commentDocs = docs[3];
+      [userDocs, topicDocs, articleDocs, commentDocs] = docs;
     });
   });
   after(() => {
