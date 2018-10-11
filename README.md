@@ -53,16 +53,16 @@ If not, run this command in your terminal:
 npm init
 ```
 
-Once the package.json file and a package-lock.json file have been created, install express, ejs, mongodb and mongoose
+Once the package.json file and a package-lock.json file have been created, install express, mongodb, mongoose and body-parser
 
 ```
-npm install express mongodb mongoose
+npm install express mongodb mongoose body-parser
 ```
 
-Then install body-parser, chai, mocha, nodemon and supertest as devDependencies
+Then install chai, mocha, nodemon and supertest as devDependencies
 
 ```
-npm -D install body-parser chai mocha nodemon supertest
+npm -D install chai mocha nodemon supertest
 ```
 
 After making sure the packages have been installed, it is time to run MongoDB using this command in your terminal:
