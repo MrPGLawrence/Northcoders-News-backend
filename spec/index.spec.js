@@ -123,14 +123,6 @@ describe("/api", function() {
             expect(article.votes).to.eql(-1);
           });
       });
-      it("PATCH returns a 400 for an invalid id", () => {
-        return request
-          .patch(`/api/articles/${articleDocs[0]._id}?vote=across`)
-          .expect(400)
-          .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Bad request, Invalid Parameter");
-          });
-      });
       it("PATCH returns a 404 when page not found", () => {
         return request
           .patch("/api/articles/5bad052fd53e38586a1feb2e?vote=up")

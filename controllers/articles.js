@@ -74,7 +74,7 @@ exports.postCommentOnArticle = (req, res, next) => {
   return Article.findOne({ _id: article_id }, "-__v")
     .then(commentMatch => {
       if (!commentMatch) {
-        throw { msg: "Comment Not Found, cannot post", status: 404 };
+        throw { msg: "Article Not Found", status: 404 };
       } else return Comment.create(newComment);
     })
     .then(comment => {
@@ -88,8 +88,7 @@ exports.patchArticleVote = (req, res, next) => {
     req.params.article_id,
     {
       $inc: {
-        votes:
-          req.query.vote === "up" ? 1 : req.query.vote === "down" ? -1 : next
+        votes: req.query.vote === "up" ? 1 : req.query.vote === "down" ? -1 : 0
       }
     },
     { new: true }
