@@ -56,7 +56,7 @@ npm init
 Once the package.json file and a package-lock.json file have been created, install express, mongodb, mongoose and body-parser
 
 ```
-npm install express mongodb mongoose body-parser
+npm install express mongodb mongoose body-parser cors
 ```
 
 Then install chai, mocha, nodemon and supertest as devDependencies
@@ -204,7 +204,7 @@ npm test
 
 This API is being hosted by Heroku.
 
-- [Northcoders News](https://northcoders-news-patrick.herokuapp.com/) - Follow the link to access the API
+- [Northcoders News](https://patrick-northcoders-news.herokuapp.com/) - Follow the link to access the API
 
 ## License
 
