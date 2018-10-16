@@ -6,7 +6,7 @@ const cors = require("cors");
 
 app.use(bodyParser.json());
 const { DB_URL } =
-  process.env.NODE_ENV === "production" ? process.env : require("./config");
+  process.env.NODE_ENV === "production" ? process.env : require("./config")
 const {
   handle400Params,
   handle400Post,

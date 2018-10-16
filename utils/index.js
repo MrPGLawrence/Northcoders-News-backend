@@ -3,7 +3,7 @@ const {
   topicData,
   articleData,
   commentData
-} = require("../seed/testData");
+} = require("../seed/productionData");
 
 exports.formatUserData = () => {
   return userData.map(user => {
@@ -21,7 +21,7 @@ exports.formatArticleData = (userDocs, topicDocs) => {
   return articleData.map(article => {
     return {
       ...article,
-      belongs_to: topicDocs.find(topic => topic.slug).slug,
+      belongs_to: topicDocs.find(topic => topic.slug === article.topic).slug,
       created_by: userDocs.find(user => user._id)
     };
   });

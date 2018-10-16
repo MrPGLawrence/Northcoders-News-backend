@@ -8,7 +8,6 @@ const {
   articleData,
   commentData
 } = require(`./${NODE_ENV}Data/`);
-
 mongoose
   .connect(
     DB_URL,
