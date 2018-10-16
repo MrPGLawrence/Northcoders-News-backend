@@ -22,8 +22,8 @@ exports.getAllArticles = (req, res, next) => {
           };
         })
       ])
-        .then(([updatedArticles]) => {
-          res.status(200).send({ updatedArticles });
+        .then(([articles]) => {
+          res.status(200).send({ articles });
         })
         .catch(next);
     });

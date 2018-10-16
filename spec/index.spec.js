@@ -4,12 +4,13 @@ const mongoose = require("mongoose");
 const app = require("../app");
 const request = require("supertest")(app);
 const seedDB = require("../seed/seed");
+const NODE_ENV = process.env.NODE_ENV || "test";
 const {
   userData,
   topicData,
   articleData,
   commentData
-} = require("../seed/testData");
+} = require(`../seed/${NODE_ENV}Data`);
 
 describe("/api", function() {
   let userDocs, topicDocs, articleDocs, commentDocs;
@@ -31,13 +32,13 @@ describe("/api", function() {
       return request
         .get("/api/articles")
         .expect(200)
-        .then(({ body: { updatedArticles } }) => {
-          expect(updatedArticles).to.be.an("array");
-          expect(updatedArticles.length).to.equal(4);
-          expect(updatedArticles[0].title).to.equal(articleDocs[0].title);
-          expect(updatedArticles[0]._id).to.equal(`${articleDocs[0]._id}`);
-          expect(updatedArticles[0].comment_count).to.equal(8);
-          expect(updatedArticles[0]).to.have.keys([
+        .then(({ body: { articles } }) => {
+          expect(articles).to.be.an("array");
+          expect(articles.length).to.equal(4);
+          expect(articles[0].title).to.equal(articleDocs[0].title);
+          expect(articles[0]._id).to.equal(`${articleDocs[0]._id}`);
+          expect(articles[0].comment_count).to.equal(8);
+          expect(articles[0]).to.have.keys([
             "_id",
             "belongs_to",
             "body",
@@ -268,13 +269,13 @@ describe("/api", function() {
         });
     });
     describe("/:topic_slug/articles", () => {
-      it("GET returns 200 and a article object", () => {
+      it.only("GET returns 200 and a article object", () => {
         return request
           .get(`/api/topics/${topicDocs[0].slug}/articles`)
           .expect(200)
           .then(({ body: { articles } }) => {
             expect(articles).to.be.an("array");
-            expect(articles.length).to.equal(4);
+            expect(articles.length).to.equal(2);
             expect(articles[0].name).to.equal(articleDocs[0].name);
             expect(articles[0]._id).to.equal(`${articleDocs[0]._id}`);
             expect(articles[0]).to.have.keys([

@@ -1,9 +1,11 @@
+const NODE_ENV = process.env.NODE_ENV || "test";
+
 const {
   userData,
   topicData,
   articleData,
   commentData
-} = require("../seed/productionData");
+} = require(`../seed/${NODE_ENV}Data`);
 
 exports.formatUserData = () => {
   return userData.map(user => {
