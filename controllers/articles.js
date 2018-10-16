@@ -2,9 +2,7 @@ const { Article, Comment } = require("../models");
 
 const getCommentCount = articles => {
   return articles.map(article => {
-    return Comment.countDocuments({ belongs_to: article._id }).then(
-      count => count
-    );
+    return Comment.countDocuments({ belongs_to: article._id });
   });
 };
 

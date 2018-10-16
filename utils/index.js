@@ -24,7 +24,8 @@ exports.formatArticleData = (userDocs, topicDocs) => {
     return {
       ...article,
       belongs_to: topicDocs.find(topic => topic.slug === article.topic).slug,
-      created_by: userDocs.find(user => user._id)
+      created_by: userDocs.find(user => user.username === article.created_by)
+        ._id
     };
   });
 };
@@ -33,8 +34,11 @@ exports.formatCommentData = (userDocs, articleDocs) => {
   return commentData.map(comment => {
     return {
       ...comment,
-      belongs_to: articleDocs.find(article => article._id),
-      created_by: userDocs.find(user => user._id)
+      belongs_to: articleDocs.find(
+        article => article.title === comment.belongs_to
+      )._id,
+      created_by: userDocs.find(user => user.username === comment.created_by)
+        ._id
     };
   });
 };
