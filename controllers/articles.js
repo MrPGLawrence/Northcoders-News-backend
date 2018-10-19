@@ -8,16 +8,14 @@ const getCommentCount = articles => {
 
 exports.getAllArticles = (req, res, next) => {
   Article.find(null, "-__v")
+    .populate("created_by")
     .then(articles => {
       return Promise.all([articles, ...getCommentCount(articles)]);
     })
     .then(([articles, ...commentCount]) => {
       return Promise.all([
         articles.map((article, index) => {
-          return {
-            ...article._doc,
-            comment_count: commentCount[index]
-          };
+          return { ...article._doc, comment_count: commentCount[index] };
         })
       ])
         .then(([articles]) => {
@@ -30,9 +28,6 @@ exports.getAllArticles = (req, res, next) => {
 exports.getArticleById = (req, res, next) => {
   Comment.count({ belongs_to: req.params.article_id })
     .then(commentCount => {
-      // if (!commentCount || commentCount < 0) {
-      //   throw { status: 404 };
-      // } else
       return Promise.all([
         Article.findById(req.params.article_id, "-__v").populate("created_by"),
         commentCount
