@@ -69,6 +69,12 @@ exports.postCommentOnArticle = (req, res, next) => {
       } else return Comment.create(newComment);
     })
     .then(comment => {
+      return Comment.findOne({ _id: comment._id }).populate(
+        "created_by",
+        "-__v"
+      );
+    })
+    .then(comment => {
       res.status(201).send({ comment });
     })
     .catch(next);

@@ -37,7 +37,7 @@ describe("/api", function() {
           expect(articles.length).to.equal(4);
           expect(articles[0].title).to.equal(articleDocs[0].title);
           expect(articles[0]._id).to.equal(`${articleDocs[0]._id}`);
-          expect(articles[0].comment_count).to.equal(8);
+          expect(articles[0].comment_count).to.equal(2);
           expect(articles[0]).to.have.keys([
             "_id",
             "belongs_to",
@@ -59,7 +59,7 @@ describe("/api", function() {
             expect(article).to.be.an("object");
             expect(article.title).to.equal(articleDocs[0].title);
             expect(article._id).to.equal(`${articleDocs[0]._id}`);
-            expect(article.comment_count).to.equal(8);
+            expect(article.comment_count).to.equal(2);
             expect(article).to.have.keys([
               "_id",
               "belongs_to",
@@ -82,7 +82,7 @@ describe("/api", function() {
       });
       it("GET returns a 404 when page not found", () => {
         return request
-          .get("/api/articles/5bad03194bdc255761379629")
+          .get("/api/articles/5bad03194bdc25576137086")
           .expect(404)
           .then(({ body: { msg } }) => {
             expect(msg).to.equal("Page not found");
@@ -139,7 +139,7 @@ describe("/api", function() {
             .expect(200)
             .then(({ body: { comments } }) => {
               expect(comments).to.be.an("array");
-              expect(comments.length).to.equal(8);
+              expect(comments.length).to.equal(2);
               expect(comments[0].title).to.equal(commentDocs[0].title);
               expect(comments[0]._id).to.equal(`${commentDocs[0]._id}`);
               expect(comments[0]).to.have.keys([
@@ -269,7 +269,7 @@ describe("/api", function() {
         });
     });
     describe("/:topic_slug/articles", () => {
-      it.only("GET returns 200 and a article object", () => {
+      it("GET returns 200 and a article object", () => {
         return request
           .get(`/api/topics/${topicDocs[0].slug}/articles`)
           .expect(200)
@@ -353,7 +353,7 @@ describe("/api", function() {
           expect(comments).to.be.an("array");
           expect(comments.length).to.equal(8);
           expect(comments[0].created_by).to.equal(
-            `${commentDocs[0].created_by.id}`
+            `${commentDocs[0].created_by}`
           );
           expect(comments[0]._id).to.equal(`${commentDocs[0].id}`);
           expect(comments[0]).to.have.keys([
