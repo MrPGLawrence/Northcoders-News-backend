@@ -2,9 +2,7 @@
 
 **Northcoders News** is a site I created to demonstrate the skills I have acquired whilst on the Full Stack Developer Pathway at Northcoders.
 
-This application interacts with a frontend React app. The frontend GitHub repo is located here: https://github.com/MrPGLawrence/Northcoders-News-frontend
-
-To create this API a database has been created and seeded, an app has been created with Models, Routes and Controllers and testing has taken place to make sure it all works properly. The database has then been deployed using mLabs and the API has been hosted on Heroku.
+To create this API a database has been created and seeded, an app has been created with Models, Routes and Controllers and testing has taken place to make sure it all works properly. The database has then been deployed using mLabs and the API has been hosted on Heroku.This application interacts with a frontend React app. The frontend GitHub repo is located here: https://github.com/MrPGLawrence/Northcoders-News-frontend
 
 ## Setup
 
