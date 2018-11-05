@@ -1,13 +1,17 @@
 # Northcoders News API
 
+**Northcoders News** is a site I created to demonstrate the skills I have acquired whilst on the Full Stack Developer Pathway at Northcoders.
+
+This application interacts with a frontend React app. The frontend GitHub repo is located here: https://github.com/MrPGLawrence/Northcoders-News-frontend
+
 To create this API a database has been created and seeded, an app has been created with Models, Routes and Controllers and testing has taken place to make sure it all works properly. The database has then been deployed using mLabs and the API has been hosted on Heroku.
 
 ## Setup
 
-To begin, CLONE the repository from github and run this command in your terminal:
+To begin, FORK and CLONE the repository from github and run this command in your terminal:
 
 ```
-git clone https://github.com/MrPGLawrence/BE2-northcoders-news.git
+git clone https://github.com/MrPGLawrence/Northcoders-News-backend
 ```
 
 ### Install Node.js & npm
@@ -94,11 +98,6 @@ module.exports = config[NODE_ENV];
 ## Routes
 
 The server has the following end-points:
-
-```http
-GET /api
-# Serves an HTML page with documentation for all the available endpoints
-```
 
 ```http
 GET /api/topics
@@ -204,7 +203,7 @@ npm test
 
 This API is being hosted by Heroku.
 
-- [Northcoders News](https://patrick-northcoders-news.herokuapp.com/) - Follow the link to access the API
+[Northcoders News](https://patrick-northcoders-news.herokuapp.com/) - Follow the link to access the API.
 
 ## License
 
@@ -212,8 +211,8 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Author
 
-- **Patrick Lawrence** - _Initial work_ - [MrPGLawrence](https://github.com/MrPGLawrence)
+[Patrick Lawrence](https://github.com/MrPGLawrence)
 
 ## Acknowledgments
 
-- **Northcoders** - [Northcoders](https://github.com/northcoders)
+[Northcoders](https://github.com/northcoders)
